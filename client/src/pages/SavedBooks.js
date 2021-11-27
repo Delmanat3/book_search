@@ -4,31 +4,29 @@ import Auth from '../utils/auth';
 import {GET_ME}from '../utils/queries'
 import {REMOVE_BOOK}from '../utils/mutations'
 import { useQuery,useMutation } from '@apollo/client';
+ 
 
 
-const SavedBooks = () => {
-  
-
+const SavedBooks = async() => {
   // use this to determine if `useEffect()` hook needs to run again
  
-  const {loading,error,data}=useQuery(GET_ME);
+  const {loading,data}=useQuery(GET_ME);
+const [removeBook,{error}]=useMutation(REMOVE_BOOK);
+const userData=data?.me || {}
+const handleDeleteBook=async(bookId)=>{
 
-  const [removeBook,{error}]=useMutation(REMOVE_BOOK);
-
-  const userData=data?.me || {}
-
-
-const handleDeleteBook=()=>{
   const token = Auth.loggedIn() ? Auth.getToken() : null;
 
   if(!token){
     return false
   }
   try{
-    const { data }= await removeBook({
+    const  data  = await removeBook({
       variables:{bookId}
     })
+    
     removeBook(bookId)
+
   }catch(err){
     console.error(err)
   }
